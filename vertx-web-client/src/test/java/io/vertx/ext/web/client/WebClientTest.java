@@ -9,14 +9,7 @@ import io.vertx.core.buffer.Buffer;
 import io.vertx.core.dns.AddressResolverOptions;
 import io.vertx.core.file.AsyncFile;
 import io.vertx.core.file.OpenOptions;
-import io.vertx.core.http.HttpClientOptions;
-import io.vertx.core.http.HttpConnection;
-import io.vertx.core.http.HttpHeaders;
-import io.vertx.core.http.HttpMethod;
-import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.http.*;
 import io.vertx.core.json.DecodeException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -27,9 +20,8 @@ import io.vertx.core.streams.WriteStream;
 import io.vertx.ext.web.client.jackson.WineAndCheese;
 import io.vertx.ext.web.codec.BodyCodec;
 import io.vertx.ext.web.multipart.MultipartForm;
-import io.vertx.test.core.HttpTestBase;
 import io.vertx.test.core.TestUtils;
-import io.vertx.test.core.tls.Cert;
+import io.vertx.test.tls.Cert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -331,6 +323,10 @@ public class WebClientTest extends HttpTestBase {
             return this;
           }
           @Override
+          public ReadStream<Buffer> fetch(long amount) {
+            throw new UnsupportedOperationException();
+          }
+          @Override
           public ReadStream<Buffer> resume() {
             paused.set(false);
             return this;
@@ -384,6 +380,10 @@ public class WebClientTest extends HttpTestBase {
             return this;
           }
           @Override
+          public ReadStream<Buffer> fetch(long amount) {
+            return this;
+          }
+          @Override
           public ReadStream<Buffer> pause() {
             return this;
           }
@@ -396,8 +396,11 @@ public class WebClientTest extends HttpTestBase {
             return this;
           }
         }, onFailure(err -> {
-          assertSame(cause, err);
-          complete();
+          if (cause == err) {
+            complete();
+          } else {
+            fail(new Exception("Unexpected failure", err));
+          }
         }));
     await();
   }
@@ -420,6 +423,10 @@ public class WebClientTest extends HttpTestBase {
         if (handler != null) {
           vertx.runOnContext(v -> exceptionHandler.handle(cause));
         }
+        return this;
+      }
+      @Override
+      public ReadStream<Buffer> fetch(long amount) {
         return this;
       }
       @Override
