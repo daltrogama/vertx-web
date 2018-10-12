@@ -1,7 +1,20 @@
 = Cheatsheets
 
-[[OperationResult]]
-== OperationResult
+[[OperationRequest]]
+== OperationRequest
+
+
+[cols=">25%,25%,50%"]
+[frame="topbot"]
+|===
+^|Name | Type ^| Description
+|[[params]]`@params`|`Json object`|+++
+Get request parsedParameters as JSON
++++
+|===
+
+[[OperationResponse]]
+== OperationResponse
 
 
 [cols=">25%,25%,50%"]
@@ -11,17 +24,6 @@
 |[[payload]]`@payload`|`Buffer`|-
 |[[statusCode]]`@statusCode`|`Number (Integer)`|-
 |[[statusMessage]]`@statusMessage`|`String`|-
-|===
-
-[[RequestContext]]
-== RequestContext
-
-
-[cols=">25%,25%,50%"]
-[frame="topbot"]
-|===
-^|Name | Type ^| Description
-|[[params]]`@params`|`Json object`|-
 |===
 
 [[RouterFactoryOptions]]
